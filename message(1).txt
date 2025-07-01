@@ -331,22 +331,13 @@ do -- equipgun / unequipgun / buygun
         return getproto(require(gameFolder.GunShop.GunShopUI).displayList, 1)
     end)
     
-    local foundKeys, orginalConstants, modifiedConstants, prefixIndexes = errorHandleMultiSearch(displayGunList, { "UneqipGun", "EquipGun", "BuyGun" })
+    local foundKeys = errorHandleMultiSearch(displayGunList, { "UnequipGun", "EquipGun", "BuyGun" })
 
     if foundKeys then
-        for index = 1, 3 do
-            local key = foundKeys[index] and foundKeys[index][1] or "Failed to fetch key"
-            local originalPrefixIndex = table.find(orginalConstants, modifiedConstants[prefixIndexes[index]])
-            local previousConstant = originalPrefixIndex and orginalConstants[originalPrefixIndex - 1]
-    
-            if previousConstant == "GetEquipped" then
-                networkKeys.UnequipGun = key
-            elseif previousConstant == "doesPlayerOwn" then
-                networkKeys.EquipGun = key
-            else
-                networkKeys.BuyGun = key
-            end
-        end
+        -- Order: [1] = UNEQUIP, [2] = EQUIP, [3] = BUY
+        networkKeys.UnequipGun = foundKeys[1] and foundKeys[1][1]
+        networkKeys.EquipGun   = foundKeys[2] and foundKeys[2][1]
+        networkKeys.BuyGun     = foundKeys[3] and foundKeys[3][1]
     end
 end
 
