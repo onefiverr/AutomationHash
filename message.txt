@@ -330,16 +330,16 @@ do -- equipgun / unequipgun / buygun
     local displayGunList = errorHandle(function()
         return getproto(require(gameFolder.GunShop.GunShopUI).displayList, 1)
     end)
-    
-    local foundKeys = errorHandleMultiSearch(displayGunList, { "UnequipGun", "EquipGun", "BuyGun" })
 
-    if foundKeys then
-        -- Order: [1] = UNEQUIP, [2] = EQUIP, [3] = BUY
-        networkKeys.UnequipGun = foundKeys[1] and foundKeys[1][1]
-        networkKeys.EquipGun   = foundKeys[2] and foundKeys[2][1]
-        networkKeys.BuyGun     = foundKeys[3] and foundKeys[3][1]
+    local foundKeys, orginalConstants, modifiedConstants, prefixIndexes = errorHandleMultiSearch(displayGunList, { "UnequipGun", "EquipGun", "BuyGun" })
+
+    if foundKeys and #foundKeys >= 3 then
+        networkKeys.EquipGun = foundKeys[1][1]
+        networkKeys.UnequipGun   = foundKeys[3][1]
+        networkKeys.BuyGun     = foundKeys[2][1]
     end
 end
+
 
 do -- ragdoll
     keyFunctions.Ragdoll = function()
